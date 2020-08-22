@@ -40,45 +40,50 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(require('./controllers/'));
+
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
+  sequelize.sync({ force: false });
+});
  
-// configure express
-const app = express();
-const myStore = new SequelizeStore({
-    db: sequelize,
-  });
-app.use(
-  session({
-    secret: "keyboard cat",
-    store: myStore,
-    resave: false, // we support the touch method so per the express-session docs this should be set to false
-    proxy: true, // if you do SSL outside of node.
-  })
-);
-// continue as normal
+// // configure express
+// const app = express();
+// const myStore = new SequelizeStore({
+//     db: sequelize,
+//   });
+// app.use(
+//   session({
+//     secret: "keyboard cat",
+//     store: myStore,
+//     resave: false, // we support the touch method so per the express-session docs this should be set to false
+//     proxy: true, // if you do SSL outside of node.
+//   })
+// );
+// // continue as normal
 
-myStore.sync();
+// myStore.sync();
 
-const port = 3000
+// const port = 3000
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+// app.get('/', (req, res) => {
+//   res.send('Hello World!')
+// })
 
-// Access the session as req.session
-app.get('/counter', function(req, res, next) {
-    if (req.session.views) {
-      req.session.views++
-      res.setHeader('Content-Type', 'text/html')
-      res.write('<p>views: ' + req.session.views + '</p>')
-      res.write('<p>expires in: ' + (req.session.cookie.maxAge / 1000) + 's</p>')
-      res.end()
-    } else {
-      req.session.views = 1
-      res.end('welcome to the session demo. refresh!')
-    }
-  })
+// // Access the session as req.session
+// app.get('/counter', function(req, res, next) {
+//     if (req.session.views) {
+//       req.session.views++
+//       res.setHeader('Content-Type', 'text/html')
+//       res.write('<p>views: ' + req.session.views + '</p>')
+//       res.write('<p>expires in: ' + (req.session.cookie.maxAge / 1000) + 's</p>')
+//       res.end()
+//     } else {
+//       req.session.views = 1
+//       res.end('welcome to the session demo. refresh!')
+//     }
+//   })
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
+// app.listen(port, () => {
+//   console.log(`Example app listening at http://localhost:${port}`)
+// })
 
