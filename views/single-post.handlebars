@@ -19,6 +19,22 @@
 
             <div class="card-body">
                 {{#each post.Comments}}
+                    <div>
+                        <p>
+                            {{body}}
+                        </p>
+                        <p>
+                            &mdash; {{User.username}}, {{format_date createdAt}}
+                        </p>
+                    </div>
+                {{/each}}
             </div>
         </section>
+    {{/if}}
+
+    <form id="new-comment-form" class="card">
+        <div class="card-header">
+            
+        </div>
+    </form>
 </div>
