@@ -4,13 +4,33 @@ const session = require('express-session');
 const exphbs = require('express-handlebars');
 
 const app = express();
+const PORT = process.env.PORT || 3001;
 
- 
+// create database
+const sequelize = require('./config/connection');
+
 // initalize sequelize with session store
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
  
-// create database
-const sequelize = require('./config/connection');
+const sess = {
+  secret: "Diarrhea at Barnes and Noble",
+  cookie: {}, 
+  resave: false,
+  saveUninitialized: true,
+  store: new SequelizeStore({
+    db: sequelize
+  })
+};
+
+app.use(session(sess));
+
+const hbs = exphbs.create({
+  helpers: {
+    format_date: date => {
+      return `${date.getMonth() + 1}/${date.getDate()}/${date.getYear()}`;
+    }
+  }
+});
  
 // configure express
 const app = express();
