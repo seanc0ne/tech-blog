@@ -33,10 +33,20 @@
     {{/if}}
 
 {{!-- {{WRITE THIS ONE LATER}} --}}
-
+    {{#if loggedIn}}
     <form id="new-comment-form" class="card">
         <div class="card-header">
-
+            <textarea name="comment-body"></textarea>
+        </div>
+        <div>
+            <button type="submit">ADD COMMENT</button>
         </div>
     </form>
+    {{/if}}
+
+    {{> comments post.comments}}
+
+    {{#if loggedIn}}
+    <script src="/javascript/comment.js"></script>
+    {{/if}}
 </div>
