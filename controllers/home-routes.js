@@ -4,39 +4,40 @@ const withAuth = require('../utils/auth');
 
 router.get('/', (req, res) => {
     Post.findAll({
-        attributes: [
-            'id',
-            'post_content',
-            'title',
-            'created_at'
-        ],
-        order: [['created_at', 'DESC']],
+        // attributes: [
+        //     'id',
+        //     'post_content',
+        //     'title',
+        //     'created_at'
+        // ],
+        // order: [['created_at', 'DESC']],
         include: [
-            {
-                model: Comment, 
-                attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
-                include: {
-                    model: User,
-                    attributes: ['username']
-                }
-            },
-            {
-                model: User,
-                attributes: ['username']
-            }
+            User
+            // {
+            //     model: Comment, 
+            //     attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+            //     include: {
+            //         model: User,
+            //         attributes: ['username']
+            //     }
+            // },
+            // {
+            //     model: User,
+            //     attributes: ['username']
+            // }
         ]
-    })
-    .then((dbPostData) => {
+    }).then((dbPostData) => {
+        console.log('test');
         const posts = dbPostData.map((Post) => Post.get({ plain: true }));
-        res.render('homepage', {
+        res.render('all-posts', {
             posts,
-            loggedIn: req.session.loggedIn
+            // loggedIn: req.session.loggedIn
         });
     })
-    .catch((err) => {
-        console.log(err);
-        res.status(500).json(err);
-    });
+    // .catch((err) => {
+    //     console.log(err);
+    //     res.status(500).json(err);
+    // });
 });
 
 router.get('/post/:id', (req, res) => {

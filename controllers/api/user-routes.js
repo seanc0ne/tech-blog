@@ -13,6 +13,7 @@ router.post("/register", (req, res) => {
             req.session.loggedIn = true;
 
             res.json(dbUserData);
+            console.log(dbUserData)
         });
     })
     .catch(err => {
@@ -21,6 +22,7 @@ router.post("/register", (req, res) => {
     });
 });
 
+//endpoint is /users/login
 router.post("/login", (req,res) => {
     User.findOne({
         where: {
