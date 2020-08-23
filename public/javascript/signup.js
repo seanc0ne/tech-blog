@@ -1,6 +1,4 @@
-const { json } = require("sequelize/types");
-
-const handleSignup = (event) => {
+const handleSignup = async function (event) {
     event.preventDefault();
 
     const passwordEl = document.querySelector('#password-input-signup');
@@ -11,14 +9,10 @@ const handleSignup = (event) => {
             username: usernameEl.value,
             password: passwordEl.value
         }),
-        headers: {
-            'content-type': 'application/JSON'
-        }.then(() => {
+        headers: { 'content-type': 'application/JSON' }
+    }).then(function () {
             document.location.replace('/dashboard')
-        }).catch(err => {
-            console.error(err)
-        })
-    })
+        }).catch(err => console.error(err))
 }
 
 document.querySelector('#signup-form').addEventListener('submit', handleSignup);
