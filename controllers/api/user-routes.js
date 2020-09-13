@@ -25,7 +25,7 @@ router.post("/register", (req, res) => {
 //endpoint is /users/login
 router.post("/login", (req,res) => {
     User.findOne({
-        where: {
+        where: { 
             username: req.body.username
         }
     }).then(dbUserData => {
