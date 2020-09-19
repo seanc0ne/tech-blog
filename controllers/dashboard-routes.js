@@ -1,18 +1,20 @@
 const router = require('express').Router();
 const { Post, User, Comment } = require('../models');
-const userAuth = require('../utils/auth');
+const withAuth = require('../utils/auth');
 
-router.get('/', userAuth, (req, res) => {
+//get all posts by user
+router.get('/', withAuth, (req, res) => {
     Post.findAll({
         where: {
             user_id: req.session.user_id
         },
         attributes: [
             'id',
-            'post_content',
+            'content',
             'title',
             'created_at'
         ],
+        order: [['created_at', 'DESC']],
         include: [
             {
               model: Comment,
@@ -22,6 +24,7 @@ router.get('/', userAuth, (req, res) => {
                 'post_id', 
                 'user_id', 
                 'created_at'],
+                order: [['created_at', 'DESC']],
               include: {
                   model: User,
                   attributes: ['username']
@@ -34,11 +37,8 @@ router.get('/', userAuth, (req, res) => {
         ]
     })
         .then(dbPostData => {
-            const posts = dbPostData.map(Post => Post.get({ plain: true}));
-            res.render('dashboard', {
-                posts,
-                loggedIn: true
-            })
+            const posts = dbPostData.map(Post => Post.get({ plain: true }));
+            res.render('dashboard', { posts, loggedIn: true });
         })
         .catch(err => {
             console.log(err);
@@ -46,14 +46,15 @@ router.get('/', userAuth, (req, res) => {
         });
 });
 
-router.get('/edit/:id', userAuth, (req, res) => {
+//edit single post
+router.get('/edit/:id', withAuth, (req, res) => {
     Post.findOne({
         where: {
             id: req.params.id
         },
         attributes: [
             'id',
-            'post_content',
+            'content',
             'title',
             'created_at'
         ],
@@ -66,6 +67,7 @@ router.get('/edit/:id', userAuth, (req, res) => {
                     'post_id',
                     'user_id',
                     'created_at'],
+                order: [['created_at', 'DESC']],
                 include: {
                     model: User,
                     attributes: ['username']
@@ -78,12 +80,16 @@ router.get('/edit/:id', userAuth, (req, res) => {
         ]
     })
     .then(dbPostData => {
+        if (!dbPostData) {
+            res.status(404).json({ message: 'POST NOT FOUND '});
+            return;
+        }
         const post = dbPostData.get({ plain: true });
         console.log('THIS IS POST: ', post)
         res.render('edit-blog-post', {
             post,
             loggedIn: true
-        })
+        });
     })
     .catch(err => {
         console.log(err);
@@ -92,10 +98,3 @@ router.get('/edit/:id', userAuth, (req, res) => {
 });
   
 module.exports = router;
-
-// when logged in
-// creation
-// editing capabilities
-// delete
-
-
