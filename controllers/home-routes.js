@@ -1,45 +1,46 @@
 const router = require('express').Router();
 const { Post, User, Comment } = require('../models');
-const withAuth = require('../utils/auth');
 
+//show all posts
 router.get('/', (req, res) => {
     Post.findAll({
-        // attributes: [
-        //     'id',
-        //     'post_content',
-        //     'title',
-        //     'created_at'
-        // ],
-        // order: [['created_at', 'DESC']],
+        attributes: [
+            'id',
+            'content',
+            'title',
+            'created_at'
+        ],
+        order: [['created_at', 'DESC']],
         include: [
-            User
-            // {
-            //     model: Comment, 
-            //     attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
-            //     include: {
-            //         model: User,
-            //         attributes: ['username']
-            //     }
-            // },
-            // {
-            //     model: User,
-            //     attributes: ['username']
-            // }
+            {
+                model: Comment, 
+                attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                order: [['created_at', 'DESC']],
+                include: {
+                    model: User,
+                    attributes: ['username']
+                }
+            },
+            {
+                model: User,
+                attributes: ['username']
+            }
         ]
     }).then((dbPostData) => {
         console.log('test');
-        const posts = dbPostData.map((Post) => Post.get({ plain: true }));
-        res.render('all-posts', {
+        const posts = dbPostData.map(post => post.get({ plain: true }));
+        res.render('homepage', {
             posts,
-            // loggedIn: req.session.loggedIn
+            loggedIn: req.session.loggedIn
         });
     })
-    // .catch((err) => {
-    //     console.log(err);
-    //     res.status(500).json(err);
-    // });
+    .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+    });
 });
 
+//show single post
 router.get('/post/:id', (req, res) => {
     Post.findOne({
         where: {
@@ -47,7 +48,7 @@ router.get('/post/:id', (req, res) => {
         },
         attributes: [
             'id',
-            'post_content',
+            'content',
             'title',
             'created_at'
         ],
@@ -61,6 +62,7 @@ router.get('/post/:id', (req, res) => {
                     'user_id',
                     'created_at'
                 ],
+                order: [['created_at', 'DESC']],
                 include: {
                     model: User,
                     attributes: ['username']
@@ -91,6 +93,7 @@ router.get('/post/:id', (req, res) => {
     });
 });
 
+//show login page
 router.get('/login', (req, res) => {
     if (req.session.loggedIn) {
         res.redirect('/');
@@ -99,6 +102,7 @@ router.get('/login', (req, res) => {
     res.render('login');
 });
 
+//show signup
 router.get('/signup', (req, res) => {
     if (req.session.loggedIn) {
         res.redirect('/');
@@ -108,9 +112,3 @@ router.get('/signup', (req, res) => {
 });
 
 module.exports = router;
-
-// links to sign up and sign in
-// api for retrieving posts (get all posts)
-// new post API for a comment
-// anon user view 
-
